@@ -18,31 +18,29 @@ const PopUpForm = ({ onClose }) => {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema)
   });
+  const [isLoading, setIsLoading] = useState(false); 
+
 
   const handleFormSubmit = async (data) => {
-    if(data.refereeEmail == data.referrerEmail){
-      toast.error("Same Emails won't be Added to the refer List")
+    if (data.refereeEmail === data.referrerEmail) {
+      toast.error("Same Emails won't be Added to the refer List");
+    } else {
+      setIsLoading(true); // Set loading state to true
+      const { refereeEmail, refereeName, refereePhoneNo, referrerEmail, referrerName, referrerPhoneNo } = data;
+      try {
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/insertRefer`, {
+          refereeEmail, refereeName, refereePhoneNo, referrerEmail, referrerName, referrerPhoneNo
+        });
+        toast.success(res.data.message);
+        setTimeout(() => {
+          onClose();
+        }, 100);
+      } catch (e) {
+        toast.error(e.response.data.message);
+      } finally {
+        setIsLoading(false); // Reset loading state
+      }
     }
-    else{
-      const{refereeEmail,refereeName,refereePhoneNo,referrerEmail,referrerName,referrerPhoneNo} = data
-try{
-  const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/insertRefer`,{
-    refereeEmail,refereeName,refereePhoneNo,referrerEmail,referrerName,referrerPhoneNo
-  })
-  toast.success(res.data.message)
-  setTimeout(() => {
-    onClose();
-  }, 2000);
-}
-catch(e){
-  toast.error(e.response.data.message)
-}
-      // setTimeout(() => {
-      //   onClose();
-      // }, 2000);
-    }
-
-   
   };
 
   return (
@@ -96,8 +94,15 @@ catch(e){
             <label htmlFor="refereePhoneNo" className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Referee Phone Number</label>
             {errors.refereePhoneNo && <p className="text-red-500 text-xs mt-2">{errors.refereePhoneNo.message}</p>}
           </div>
-
-          <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Submit</button>
+          <div className="flex justify-center">
+          <button
+            type="submit"
+            className="text-white   bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+            disabled={isLoading} 
+          >
+            {isLoading ? 'Submitting...' : 'Submit'} 
+          </button> 
+          </div>
         </form>
       </div>
     </div>
