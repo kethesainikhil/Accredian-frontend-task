@@ -30,6 +30,9 @@ try{
     refereeEmail,refereeName,refereePhoneNo,referrerEmail,referrerName,referrerPhoneNo
   })
   toast.success(res.data.message)
+  setTimeout(() => {
+    onClose();
+  }, 2000);
 }
 catch(e){
   toast.error(e.response.data.message)
