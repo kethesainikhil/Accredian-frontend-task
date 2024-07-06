@@ -34,7 +34,7 @@ const PopUpForm = ({ onClose }) => {
         toast.success(res.data.message);
         setTimeout(() => {
           onClose();
-        }, 100);
+        }, 2000);
       } catch (e) {
         toast.error(e.response.data.message);
       } finally {
