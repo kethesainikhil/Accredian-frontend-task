@@ -26,7 +26,7 @@ const PopUpForm = ({ onClose }) => {
     else{
       const{refereeEmail,refereeName,refereePhoneNo,referrerEmail,referrerName,referrerPhoneNo} = data
 try{
-  const res = await axios.post("http://localhost:4000/insertRefer",{
+  const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/insertRefer`,{
     refereeEmail,refereeName,refereePhoneNo,referrerEmail,referrerName,referrerPhoneNo
   })
   toast.success(res.data.message)
